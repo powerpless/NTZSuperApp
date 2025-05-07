@@ -57,6 +57,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/workout/**").fullyAuthenticated()
+                        .requestMatchers("/api/category/**").fullyAuthenticated()
+                        .requestMatchers("/api/dic-items/**").fullyAuthenticated()
+                        .requestMatchers("/api/item-catalog/**").fullyAuthenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

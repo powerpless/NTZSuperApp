@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/dic-items")
+@RequestMapping("/api/dic-items")
 @RequiredArgsConstructor
 public class DicItemController {
     private final DicItemService dicItemService;
