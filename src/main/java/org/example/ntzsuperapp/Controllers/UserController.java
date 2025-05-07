@@ -4,6 +4,7 @@ import org.example.ntzsuperapp.DTO.UsernameUpdateDTO;
 import org.example.ntzsuperapp.Entity.User;
 import org.example.ntzsuperapp.Repo.PersonRepo;
 import org.example.ntzsuperapp.Repo.UserRepo;
+import org.example.ntzsuperapp.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
     @Autowired
-    PersonRepo personRepo;
+    private PersonRepo personRepo;
     @Autowired
-    UserRepo userRepo;
+    private UserRepo userRepo;
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> changePersonalData(@PathVariable Long id, @RequestBody UsernameUpdateDTO request) {
@@ -32,4 +34,5 @@ public class UserController {
 
         return ResponseEntity.ok("Nickname was updated");
     }
+
 }
