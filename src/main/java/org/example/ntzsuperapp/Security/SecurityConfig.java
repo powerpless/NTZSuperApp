@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/category/**").fullyAuthenticated()
                         .requestMatchers("/api/dic-items/**").fullyAuthenticated()
                         .requestMatchers("/api/item-catalog/**").fullyAuthenticated()
+                        .requestMatchers("/swagger-ui/").permitAll()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
