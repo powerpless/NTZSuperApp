@@ -1,5 +1,6 @@
 package org.example.ntzsuperapp.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,5 +17,6 @@ public class Person {
     private String nickName;
     private boolean hasBeenDeleted = false;
     @OneToOne(mappedBy = "person")
+    @JsonIgnore
     private User user;
 }

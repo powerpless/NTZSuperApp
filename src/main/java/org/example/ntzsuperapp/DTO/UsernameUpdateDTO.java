@@ -1,14 +1,11 @@
 package org.example.ntzsuperapp.DTO;
 
 public class UsernameUpdateDTO {
-    private String newUsername;
+    private String newNickname;
 
-    public String getNewUsername() {
-        return newUsername;
+    public String getNewNickname() {
+        return newNickname;
     }
 
-    public void setNewUsername(String newUsername) {
-        this.newUsername = newUsername;
-    }
 }
 

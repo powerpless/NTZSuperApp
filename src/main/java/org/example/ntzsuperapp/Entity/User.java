@@ -24,7 +24,6 @@ public class User {
     private String email;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id", referencedColumnName = "id")
-    @JsonIgnore
     private Person person;
     private boolean hasBeenDeleted;
 
