@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,6 +27,12 @@ public class User {
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person person;
     private boolean hasBeenDeleted;
+
+    //workout
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Workout> workouts;
+    //workout
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(

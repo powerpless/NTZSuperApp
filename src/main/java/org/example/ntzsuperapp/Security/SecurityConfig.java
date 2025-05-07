@@ -56,7 +56,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/secured/user").fullyAuthenticated()
+                        .requestMatchers("/api/workout/**").fullyAuthenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

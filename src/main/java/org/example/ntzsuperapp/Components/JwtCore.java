@@ -13,7 +13,7 @@ import java.util.Date;
 public class JwtCore {
     @Value("anusxdguyad237nxdgjagwd72313nxgajsgd712gs781nsngvo938274bd")
     private String secret;
-    @Value("60000")
+    @Value("3600000")
     private int lifeTime;
 
     public String generateToken(Authentication authentication){
@@ -26,12 +26,16 @@ public class JwtCore {
                 .compact();
     }
 
-    public String getNameFromJwt(String token){
-        return Jwts.parser().setSigningKey(secret).parseClaimsJwt(token).getBody().getSubject();
+    public String getNameFromJwt(String token) {
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public long getExpirationTime(){
-        return System.currentTimeMillis() + 60000;
+        return System.currentTimeMillis() + lifeTime;
     }
 }
 

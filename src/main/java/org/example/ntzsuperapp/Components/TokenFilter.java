@@ -19,6 +19,11 @@ public class TokenFilter extends OncePerRequestFilter {
     private JwtCore jwtCore;
     private UserDetailsService userDetailsService;
 
+    public TokenFilter(JwtCore jwtCore, UserDetailsService userDetailsService) {
+        this.jwtCore = jwtCore;
+        this.userDetailsService = userDetailsService;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = null;
@@ -39,12 +44,12 @@ public class TokenFilter extends OncePerRequestFilter {
                 }
                 if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
                     userDetails = userDetailsService.loadUserByUsername(username);
-                    auth = new UsernamePasswordAuthenticationToken(userDetails,null);
+                    auth = new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
         } catch (Exception ex){
-
+            ex.printStackTrace();
         }
         filterChain.doFilter(request, response);
     }
