@@ -236,3 +236,251 @@ id — ID тренировки
 200 OK: обновлённая тренировка
 
 404 Not Found: если тренировка не найдена
+
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+------------------------CATEGORY - DICITEM - ITEMCATALOG - CONTROLLERS--------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+
+
+1. CATEGORY CONTROLLER 
+
+Base URL: /api/categories
+
+    1.1. Создать категорию
+        Метод: POST
+        URL: /api/categories
+        Тело запроса (JSON):
+        {
+        "ruName": "Электроника",
+        "engName": "Electronics"
+        }
+        Response: 201 created
+        
+    1.2. Получить все категории
+        Метод: GET
+        URL: /api/categories
+        Response: 200 OK
+
+    1.3. Получить категорию по ID
+        Метод: GET
+        URL: /api/categories/{id}
+        Параметры URL:
+        id (Long) — идентификатор категории
+        Тело запроса: отсутствует
+        Пример ответа (200 OK):
+        Ошибки:
+        404 Not Found — если категории с таким id нет.
+
+    1.4. Обновить категорию
+        Метод: PUT
+        URL: /api/categories/{id}
+        Параметры URL:
+        id (Long) — идентификатор категории
+        Тело запроса (JSON):
+        {
+         "ruName": "String",
+         "engName": "String"
+        }
+        Response: 200 OK
+        Ошибки:
+        404 Not Found — если id не найден.
+
+    1.5. Удалить категорию
+        Метод: DELETE
+        URL: /api/categories/{id}
+        Параметры URL:
+        id (Long) — идентификатор категории
+        Тело запроса: отсутствует
+        Пример ответа:
+        Статус 204 No Content
+        Ошибки:
+        404 Not Found — если id не найден.
+
+2. ITEMCATALOG CONTROLLER
+
+Base URL: /api/item-catalogs
+
+
+        2.1. Создать запись в каталоге предметов
+            Метод: POST
+            URL: /api/item-catalogs
+            Тело запроса (JSON):
+            {
+             "ruName": "Ноутбук",
+             "engName": "Laptop",
+              "price": 1500.0,
+              "color": "Silver",
+              "weight": 2.5,
+              "categoryId": 5
+            }  
+            Пример ответа (201 Created):    
+            {
+              "id": 12,
+              "ruName": "Ноутбук",
+              "engName": "Laptop",
+              "price": 1500.0,
+              "color": "Silver",
+              "weight": 2.5,
+              "category": {
+                "id": 5,
+                "ruName": "Электроника",
+                "engName": "Electronics"
+              }
+            }
+            
+        2.2. Получить все записи каталога
+            Метод: GET          
+            URL: /api/item-catalogs           
+            Тело запроса: отсутствует           
+            Пример ответа (200 OK):        
+            [
+              {
+                "id": 12,
+                "ruName": "Ноутбук",
+                "engName": "Laptop",
+                "price": 1500.0,
+                "color": "Silver",
+                "weight": 2.5,
+                "category": { "id": 5, "ruName": "Электроника", "engName": "Electronics" }
+              },
+              { /* … другие записи … */ }
+            ]
+            
+        2.3. Получить запись каталога по ID
+            Метод: GET          
+            URL: /api/item-catalogs/{id}            
+            Параметры URL:            
+            id (Long) — идентификатор записи каталога            
+            Тело запроса: отсутствует            
+            Пример ответа (200 OK):            
+            {
+              "id": 12,
+              "ruName": "Ноутбук",
+              "engName": "Laptop",
+              "price": 1500.0,
+              "color": "Silver",
+              "weight": 2.5,
+              "category": { "id": 5, "ruName": "Электроника", "engName": "Electronics" }
+            }
+            
+        2.4. Обновить запись каталога
+            Метод: PUT            
+            URL: /api/item-catalogs/{id}            
+            Параметры URL:            
+            id (Long) — идентификатор записи каталога            
+            Тело запроса (JSON):                    
+            {
+              "ruName": "Ноутбук Pro",
+              "engName": "Laptop Pro",
+              "price": 1800.0,
+              "color": "Space Gray",
+              "weight": 2.3,
+              "categoryId": 5
+            }             
+            Пример ответа (200 OK):                       
+            {
+              "id": 12,
+              "ruName": "Ноутбук Pro",
+              "engName": "Laptop Pro",
+              "price": 1800.0,
+              "color": "Space Gray",
+              "weight": 2.3,
+              "category": { "id": 5, "ruName": "Электроника", "engName": "Electronics" }
+            }
+            
+        2.5. Удалить запись каталога
+            Метод: DELETE            
+            URL: /api/item-catalogs/{id}            
+            Параметры URL:            
+            id (Long) — идентификатор записи каталога            
+            Тело запроса: отсутствует            
+            Пример ответа:            
+            Статус 204 No Content
+
+
+3. DICITEM CONTROLLER
+
+Base URL: /api/dic-items
+
+
+        3.1. Добавить предмет пользователю
+            Метод: POST
+           
+            URL: /api/dic-items/users/{userId}           
+            Параметры URL:            
+            userId (Long) — ID пользователя-владельца           
+            Тело запроса (JSON):                  
+            {
+              "name": "MacBook Air",
+              "photoUrl": "https://example.com/photos/macbook.jpg",
+              "itemCatalogId": 12
+            }                        
+            Пример ответа (201 Created):
+            {
+              "id": 33,
+              "name": "MacBook Air",
+              "photoUrl": "https://example.com/photos/macbook.jpg",
+              "hasBeenDeleted": false,
+              "itemCatalog": {
+                "id": 12,
+                "ruName": "Ноутбук",
+                "engName": "Laptop",
+                /* … */
+              },
+              "owner": {
+                "id": 7,
+                "username": "ivanov",
+                /* … */
+              }
+            }
+            
+        3.2. Получить DicItem по ID
+            Метод: GET            
+            URL: /api/dic-items/{id}            
+            Параметры URL:            
+            id (Long) — идентификатор DicItem            
+            Тело запроса: отсутствует            
+            Пример ответа (200 OK):
+            {
+              "id": 33,
+              "name": "MacBook Air",
+              "photoUrl": "https://example.com/photos/macbook.jpg",
+              "hasBeenDeleted": false,
+              "itemCatalog": { "id": 12, "ruName": "Ноутбук", "engName": "Laptop", … },
+              "owner":       { "id": 7,  "username": "ivanov", … }
+            }
+            
+        3.3. Обновить DicItem
+            Метод: PUT            
+            URL: /api/dic-items/{id}            
+            Параметры URL:            
+            id (Long) — идентификатор DicItem           
+            Тело запроса (JSON):
+            {
+              "name": "MacBook Air M2",
+              "photoUrl": "https://example.com/photos/macbook-m2.jpg"
+            }             
+            Пример ответа (200 OK):
+            {
+              "id": 33,
+              "name": "MacBook Air M2",
+              "photoUrl": "https://example.com/photos/macbook-m2.jpg",
+              /* … остальная структура как выше … */
+            }
+            Ошибки:            
+            400 Bad Request — если name пустое или null            
+            404 Not Found — если id не найден
+            
+        3.4. Удалить (пометить) DicItem
+            Метод: DELETE            
+            URL: /api/dic-items/{id}            
+            Параметры URL:            
+            id (Long) — идентификатор DicItem            
+            Тело запроса: отсутствует            
+            Пример ответа:           
+            Статус 204 No Content (внутри hasBeenDeleted ставится true)           
+            Ошибки:            
+            404 Not Found — если id не найден
+
