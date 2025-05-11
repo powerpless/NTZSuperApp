@@ -14,6 +14,16 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepo userRepo;
 
+    public User getUserById(Long id){
+        return userRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public User findByUsername(String username){
+        return userRepo.findUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
