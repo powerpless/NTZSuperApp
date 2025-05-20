@@ -250,7 +250,7 @@ Base URL: /api/categories
 
     1.1. Создать категорию
         Метод: POST
-        URL: /api/categories
+        URL: /api/categories/me
         Тело запроса (JSON):
         {
         "ruName": "Электроника",
@@ -261,6 +261,10 @@ Base URL: /api/categories
     1.2. Получить все категории
         Метод: GET
         URL: /api/categories
+        Response: 200 OK
+    1.2.1 Получить все категории по владельцу
+        Метод: GET
+        URL: /api/categories/me
         Response: 200 OK
 
     1.3. Получить категорию по ID
@@ -333,6 +337,24 @@ Base URL: /api/item-catalogs
         2.2. Получить все записи каталога
             Метод: GET          
             URL: /api/item-catalogs           
+            Тело запроса: отсутствует           
+            Пример ответа (200 OK):        
+            [
+              {
+                "id": 12,
+                "ruName": "Ноутбук",
+                "engName": "Laptop",
+                "price": 1500.0,
+                "color": "Silver",
+                "weight": 2.5,
+                "category": { "id": 5, "ruName": "Электроника", "engName": "Electronics" }
+              },
+              { /* … другие записи … */ }
+            ]
+            
+        2.2.1 Получить все записи каталога по владельцу
+            Метод: GET          
+            URL: /api/item-catalogs/me           
             Тело запроса: отсутствует           
             Пример ответа (200 OK):        
             [
