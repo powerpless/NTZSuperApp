@@ -9,8 +9,9 @@ import java.util.List;
 @Data
 public class ItemToCreateDTO {
     private String name;
-    private Long photoId;
     private Long itemCatalogId; // catalog_id
     private Long userId; // owner
     private List<ItemAttributeDTO> attributes;
+    private String photoType;
+    private byte[] photoBytes;
 }

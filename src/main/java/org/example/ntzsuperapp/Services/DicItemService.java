@@ -27,8 +27,27 @@ public class DicItemService {
                 .orElseThrow(() -> new RuntimeException("Item catalog not found" + item.getItemCatalogId()));
         User owner = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found" + userId));
-        FileDescriptor photo = fileDescriptorRepo.findById(item.getPhotoId())
-                .orElseThrow(() -> new RuntimeException("Photo not found" + item.getPhotoId()));
+
+        List<String> allowedTypes = List.of("image/jpeg", "image/png", "image/webp");
+
+        if (item.getPhotoType() == null || !allowedTypes.contains(item.getPhotoType().toLowerCase())) {
+            throw new IllegalArgumentException("Unsupported file type. Allowed types: JPEG, PNG, WEBP.");
+        }
+
+        // 15
+        if (item.getPhotoBytes() == null || item.getPhotoBytes().length > 15 * 1024 * 1024) {
+            throw new IllegalArgumentException("File is too large. Max allowed size is 15MB.");
+        }
+
+
+        FileDescriptor photo = null;
+        if(item.getPhotoBytes() != null && item.getPhotoType()!= null){
+            photo = new FileDescriptor();
+            photo.setType(item.getPhotoType());
+            photo.setBytes(item.getPhotoBytes());
+            photo = fileDescriptorRepo.save(photo);
+        }
+
 
         DicItem dicItem = new DicItem();
         dicItem.setName(item.getName());
