@@ -29,7 +29,7 @@ public class CategoryController {
     public ResponseEntity<List<Category>> getAllCategories(){
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
-    @GetMapping("/users/me")
+    @GetMapping("/me")
     public ResponseEntity<List<Category>> getAllCategoriesByCategoryOwner(){
         return ResponseEntity.ok(categoryService.getAllCategoriesByCurrentUser());
     }

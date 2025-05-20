@@ -23,7 +23,7 @@ public class ItemCatalogController {
         return ResponseEntity.ok(itemCatalogService.getAllCatalogs());
     }
 
-    @GetMapping("/users/me")
+    @GetMapping("/me")
     public ResponseEntity<List<ItemCatalog>> getCatalogsByUser(){
         return ResponseEntity.ok(itemCatalogService.getAllCatalogsByUser());
     }

@@ -23,7 +23,7 @@ public class DicItemController {
     public ResponseEntity<DicItem> getDicItemById(@PathVariable Long id){
         return ResponseEntity.ok(dicItemService.getItemById(id));
     }
-    @PostMapping("/users/me")
+    @PostMapping("/me")
     public ResponseEntity<DicItem> addDicItem(@RequestBody ItemToCreateDTO dto){
         DicItem dicItem = dicItemService.addItem(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(dicItem);

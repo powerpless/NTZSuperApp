@@ -408,7 +408,7 @@ Base URL: /api/dic-items
         3.1. Добавить предмет пользователю
             Метод: POST
            
-            URL: /api/dic-items/users/me           
+            URL: /api/dic-items/me           
             Параметры URL:            
             me — owner (user)           
             Тело запроса (JSON):                  
