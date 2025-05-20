@@ -24,7 +24,7 @@ public class UserController {
 
 
 
-    @GetMapping("/jwt/me")
+    @GetMapping("/me")
     public ResponseEntity<User> getCurrentUserByJwt(Authentication authentication){
         String username = authentication.getName();
 
