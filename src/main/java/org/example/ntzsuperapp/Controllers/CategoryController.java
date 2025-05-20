@@ -27,6 +27,10 @@ public class CategoryController {
     public ResponseEntity<List<Category>> getAllCategories(){
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
+    @GetMapping("/users/{categoryOwnerId}")
+    public ResponseEntity<List<Category>> getAllCategoriesByCategoryOwnerId(@PathVariable Long categoryOwnerId){
+        return ResponseEntity.ok(categoryService.getAllCategoriesByCategoryOwnerId(categoryOwnerId));
+    }
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody CategoryToUpdateDTO dto){
         return ResponseEntity.ok(categoryService.updateCategory(dto, id));
