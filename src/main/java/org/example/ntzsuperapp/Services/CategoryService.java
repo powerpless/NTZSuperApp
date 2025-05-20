@@ -8,6 +8,8 @@ import org.example.ntzsuperapp.Entity.Category;
 import org.example.ntzsuperapp.Entity.User;
 import org.example.ntzsuperapp.Repo.CategoryRepo;
 import org.example.ntzsuperapp.Repo.UserRepo;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,7 +47,13 @@ public class CategoryService {
         return categoryRepo.findAll();
     }
 
-    public List<Category> getAllCategoriesByCategoryOwnerId(Long categoryOwnerId){
-        return categoryRepo.findAllCategoriesByCategoryOwnerId(categoryOwnerId);
+    public List<Category> getAllCategoriesByCurrentUser(){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepo.findUserByUsername(username).orElseThrow(() -> new RuntimeException("User not found" + username));
+
+        return categoryRepo.findAllCategoriesByCategoryOwnerId(user.getId());
     }
 }

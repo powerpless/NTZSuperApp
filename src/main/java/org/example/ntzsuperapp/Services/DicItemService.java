@@ -9,6 +9,8 @@ import org.example.ntzsuperapp.Repo.DicItemRepo;
 import org.example.ntzsuperapp.Repo.FileDescriptorRepo;
 import org.example.ntzsuperapp.Repo.ItemCatalogRepo;
 import org.example.ntzsuperapp.Repo.UserRepo;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,11 +24,14 @@ public class DicItemService {
     private final FileDescriptorRepo fileDescriptorRepo;
 
 
-    public DicItem addItem(ItemToCreateDTO item, Long userId){
+    public DicItem addItem(ItemToCreateDTO item){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User owner = userRepo.findUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found" + username));
         ItemCatalog itemCatalog = itemCatalogRepo.findById(item.getItemCatalogId())
                 .orElseThrow(() -> new RuntimeException("Item catalog not found" + item.getItemCatalogId()));
-        User owner = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found" + userId));
+
 
         List<String> allowedTypes = List.of("image/jpeg", "image/png", "image/webp");
 
