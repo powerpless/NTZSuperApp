@@ -1,6 +1,7 @@
 package org.example.ntzsuperapp.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,5 +18,6 @@ public class ItemAttribute {
 
     @ManyToOne
     @JoinColumn(name = "dic_item_id")
+    @JsonBackReference
     private DicItem dicItem;
 }

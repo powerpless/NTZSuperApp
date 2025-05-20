@@ -1,6 +1,7 @@
 package org.example.ntzsuperapp.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,6 +37,7 @@ public class DicItem {
     private FileDescriptor photo;
 
     @OneToMany(mappedBy = "dicItem", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ItemAttribute> attributes = new ArrayList<>();
 
 }
