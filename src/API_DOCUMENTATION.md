@@ -414,14 +414,18 @@ Base URL: /api/dic-items
             Тело запроса (JSON):                  
             {
               "name": "MacBook Air",
-              "photoUrl": "https://example.com/photos/macbook.jpg",
-              "itemCatalogId": 12
-            }                        
+              "photoType": "image/jpeg",
+              "photoBytes": "BASE64_ENCODED_STRING",
+              "itemCatalogId": 12,
+              "attributes": [
+                { "key": "Процессор", "value": "M2" },
+                { "key": "Цвет", "value": "Серебристый" }
+              ]
+            }                  
             Пример ответа (201 Created):
             {
               "id": 33,
               "name": "MacBook Air",
-              "photoUrl": "https://example.com/photos/macbook.jpg",
               "hasBeenDeleted": false,
               "itemCatalog": {
                 "id": 12,
@@ -446,7 +450,6 @@ Base URL: /api/dic-items
             {
               "id": 33,
               "name": "MacBook Air",
-              "photoUrl": "https://example.com/photos/macbook.jpg",
               "hasBeenDeleted": false,
               "itemCatalog": { "id": 12, "ruName": "Ноутбук", "engName": "Laptop", … },
               "owner":       { "id": 7,  "username": "ivanov", … }
@@ -460,13 +463,11 @@ Base URL: /api/dic-items
             Тело запроса (JSON):
             {
               "name": "MacBook Air M2",
-              "photoUrl": "https://example.com/photos/macbook-m2.jpg"
             }             
             Пример ответа (200 OK):
             {
               "id": 33,
               "name": "MacBook Air M2",
-              "photoUrl": "https://example.com/photos/macbook-m2.jpg",
               /* … остальная структура как выше … */
             }
             Ошибки:            
