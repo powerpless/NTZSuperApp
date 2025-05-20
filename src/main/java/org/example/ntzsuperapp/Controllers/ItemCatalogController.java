@@ -22,6 +22,11 @@ public class ItemCatalogController {
     public ResponseEntity<List<ItemCatalog>> getAllItemCatalogs(){
         return ResponseEntity.ok(itemCatalogService.getAllCatalogs());
     }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<List<ItemCatalog>> getCatalogsByUser(@PathVariable Long userId){
+        return ResponseEntity.ok(itemCatalogService.getAllCatalogsByUser(userId));
+    }
     @GetMapping("/{id}")
     public ResponseEntity<ItemCatalog> getItemCatalogById(@PathVariable Long id){
         return ResponseEntity.ok(itemCatalogService.getById(id));

@@ -4,13 +4,14 @@ package org.example.ntzsuperapp.Services;
 import lombok.RequiredArgsConstructor;
 import org.example.ntzsuperapp.DTO.ItemToCreateDTO;
 import org.example.ntzsuperapp.DTO.ItemToUpdateDTO;
-import org.example.ntzsuperapp.Entity.DicItem;
-import org.example.ntzsuperapp.Entity.ItemCatalog;
-import org.example.ntzsuperapp.Entity.User;
+import org.example.ntzsuperapp.Entity.*;
 import org.example.ntzsuperapp.Repo.DicItemRepo;
+import org.example.ntzsuperapp.Repo.FileDescriptorRepo;
 import org.example.ntzsuperapp.Repo.ItemCatalogRepo;
 import org.example.ntzsuperapp.Repo.UserRepo;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,17 +19,34 @@ public class DicItemService {
     private final DicItemRepo dicItemRepo;
     private final UserRepo userRepo;
     private final ItemCatalogRepo itemCatalogRepo;
+    private final FileDescriptorRepo fileDescriptorRepo;
 
 
     public DicItem addItem(ItemToCreateDTO item, Long userId){
         ItemCatalog itemCatalog = itemCatalogRepo.findById(item.getItemCatalogId())
                 .orElseThrow(() -> new RuntimeException("Item catalog not found" + item.getItemCatalogId()));
-        User owner = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found" + userId));
+        User owner = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found" + userId));
+        FileDescriptor photo = fileDescriptorRepo.findById(item.getPhotoId())
+                .orElseThrow(() -> new RuntimeException("Photo not found" + item.getPhotoId()));
+
         DicItem dicItem = new DicItem();
         dicItem.setName(item.getName());
-        dicItem.setPhotoUrl(item.getPhotoUrl());
         dicItem.setItemCatalog(itemCatalog);
         dicItem.setOwner(owner);
+        dicItem.setPhoto(photo);
+
+        if(item.getAttributes() != null){
+            List<ItemAttribute> attributes = item.getAttributes().stream()
+                    .map(dto -> {
+                        ItemAttribute attribute = new ItemAttribute();
+                        attribute.setKey(dto.getKey());
+                        attribute.setValue(dto.getValue());
+                        attribute.setDicItem(dicItem);
+                        return attribute;
+                    }).toList();
+            dicItem.setAttributes(attributes);
+        }
         return dicItemRepo.save(dicItem);
     }
 
@@ -47,9 +65,26 @@ public class DicItemService {
         if (dto.getName() == null || dto.getName().trim().isEmpty()) {
             throw new RuntimeException("Item can't be empty");
         }
-
         item.setName(dto.getName());
-        item.setPhotoUrl(dto.getPhotoUrl());
+
+        if(dto.getPhotoId() != null){
+            FileDescriptor photo = fileDescriptorRepo.findById(dto.getPhotoId())
+                    .orElseThrow(() -> new RuntimeException("Photo not found " + dto.getPhotoId()));
+            item.setPhoto(photo);
+        }
+
+        if (dto.getAttributes() != null) {
+            item.getAttributes().clear();
+            List<ItemAttribute> attributes = dto.getAttributes().stream().map(dtoAttr -> {
+                ItemAttribute attr = new ItemAttribute();
+                attr.setKey(dtoAttr.getKey());
+                attr.setValue(dtoAttr.getValue());
+                attr.setDicItem(item);
+                return attr;
+            }).toList();
+            item.getAttributes().addAll(attributes);
+        }
+
         return dicItemRepo.save(item);
     }
 
