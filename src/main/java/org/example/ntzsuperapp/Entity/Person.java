@@ -16,6 +16,7 @@ public class Person {
     private String middleName;
     private String nickName;
     private boolean hasBeenDeleted = false;
+    private String avatarUrl;
     @OneToOne(mappedBy = "person")
     @JsonIgnore
     private User user;
