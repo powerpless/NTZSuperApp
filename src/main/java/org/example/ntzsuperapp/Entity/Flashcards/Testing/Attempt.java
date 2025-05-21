@@ -1,13 +1,16 @@
 package org.example.ntzsuperapp.Entity.Flashcards.Testing;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.ntzsuperapp.Entity.Flashcards.Quiz;
 import org.example.ntzsuperapp.Entity.MappedSuperClass;
 import org.example.ntzsuperapp.Entity.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,10 +18,11 @@ import java.util.List;
 @Setter
 public class Attempt extends MappedSuperClass {
     @ManyToOne
+    @JsonIgnore
     private User user; // Пользователь, который прошёл тест
 
-    @OneToMany
-    private List<UserAnswers> answers; // Ответы пользователя на вопросы теста
+    @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAnswers> answers = new ArrayList<>();
 
     private int score; // Баллы, которые пользователь набрал в тесте
 
@@ -35,5 +39,7 @@ public class Attempt extends MappedSuperClass {
     private boolean isCompleted; // Завершён ли тест пользователем
 
     private boolean isPassed; // Пройден ли тест пользователем (например, если нужно набрать 70% правильных ответов, то тест считается пройденным)
+    @ManyToOne
+    private Quiz quiz;
 }
 

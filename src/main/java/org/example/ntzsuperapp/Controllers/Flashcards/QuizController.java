@@ -63,5 +63,10 @@ public class QuizController {
         return new ResponseEntity<>(quizService.completeQuiz(quizId, quiz), HttpStatus.OK);
     }
 
+    @GetMapping("/attempts")
+    public ResponseEntity<?> getQuizAttempts() {
+        return new ResponseEntity<>(quizService.getQuizAttempts(), HttpStatus.OK);
+    }
+
 
 }

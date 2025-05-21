@@ -3,11 +3,14 @@ package org.example.ntzsuperapp.Controllers;
 import org.example.ntzsuperapp.Entity.Workout;
 import org.example.ntzsuperapp.Services.UserService;
 import org.example.ntzsuperapp.Services.WorkoutService;
+import org.hibernate.jdbc.Work;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/workout")
@@ -19,6 +22,13 @@ public class WorkoutController {
     public ResponseEntity<Workout> addWorkout(@RequestBody Workout workout, Authentication authentication) {
         String username = authentication.getName();
         return ResponseEntity.ok(workoutService.addWorkout(workout, username));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<List<Workout>> getWorkouts() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return ResponseEntity.ok(workoutService.getAllWorkoutsByUsername(username));
     }
 
     @GetMapping("/{id}")

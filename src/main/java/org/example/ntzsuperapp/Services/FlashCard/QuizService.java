@@ -187,40 +187,70 @@ public class QuizService extends AbstractService {
 
     public Attempt completeQuiz(Long quizId, QuizAttempt quiz) {
         User user = getCurrentUser();
-        Quiz quizEntity = quizRepo.findById(quizId).orElseThrow(() -> new RuntimeException("Quiz not found"));
-        if (quizEntity.isActive() && quizEntity.isPrivate() && !quizEntity.getQuizOwner().getId().equals(user.getId())) {
+        Quiz quizEntity = quizRepo.findById(quizId)
+                .orElseThrow(() -> new RuntimeException("Quiz not found"));
+
+        if (quizEntity.isActive() && quizEntity.isPrivate() &&
+                !quizEntity.getQuizOwner().getId().equals(user.getId())) {
             throw new RuntimeException("Quiz is private");
         }
+
         Attempt attempt = new Attempt();
-        List<UserAnswers> userAnswers = new ArrayList<>();
-        int correctAnswers = 0;
-        for (QuizAttempt.UserAnswers answers : quiz.getUserAnswers()) {
-            Flashcard flashcard = flashcardRepository.findById(answers.getQuestionId())
-                    .orElseThrow(() -> new RuntimeException("FlashCard not found"));
-            Answers answers1 = answersRepository.findById(answers.getAnswerId())
-                    .orElseThrow(() -> new RuntimeException("Answer not found"));
-            UserAnswers userAnswer = new UserAnswers();
-            if (flashcard.getCorrectAnswerId() == answers.getAnswerId()) {
-                userAnswer.setAnswers(answers1);
-                userAnswer.setUserId(user.getId());
-                userAnswer.setCorrect(true);
-                correctAnswers++;
-                userAnswers.add(userAnswer);
-            } else {
-                userAnswer.setAnswers(answers1);
-                userAnswer.setUserId(user.getId());
-                userAnswer.setCorrect(false);
-                userAnswers.add(userAnswer);
-            }
-            userAnswers.add(userAnswer);
-        }
-        attempt.setAnswers(userAnswers);
         attempt.setUser(user);
         attempt.setTimeSpent(quiz.getTimeSpent());
-        attempt.setSkippedQuestions(quizEntity.getFlashcard().size() - userAnswers.size());
-        attempt.setCorrectAnswers(correctAnswers);
-        attempt.setWrongAnswers(userAnswers.size() - correctAnswers); // Правильней не учитывать пропущенные вопросы;
         attempt.setCompleted(true);
+
+        List<UserAnswers> userAnswers = new ArrayList<>();
+        int correctAnswers = 0;
+        int answeredQuestions = 0;
+
+        for (QuizAttempt.UserAnswers answers : quiz.getUserAnswers()) {
+            // Пропущенные (null или -1) мы просто игнорируем
+            if (answers.getAnswerId() == null || answers.getAnswerId() <= 0) continue;
+
+            Flashcard flashcard = flashcardRepository.findById(answers.getQuestionId())
+                    .orElseThrow(() -> new RuntimeException("FlashCard not found"));
+            Answers answerEntity = answersRepository.findById(answers.getAnswerId())
+                    .orElseThrow(() -> new RuntimeException("Answer not found"));
+
+            UserAnswers userAnswer = new UserAnswers();
+            userAnswer.setAnswers(answerEntity);
+            userAnswer.setAttempt(attempt);
+            userAnswer.setUserId(user.getId());
+
+            boolean isCorrect = flashcard.getCorrectAnswerId() == (answers.getAnswerId());
+            userAnswer.setCorrect(isCorrect);
+            userAnswers.add(userAnswer);
+
+            answeredQuestions++;
+            if (isCorrect) correctAnswers++;
+        }
+
+        int totalQuestions = quizEntity.getFlashcard().size();
+        int wrongAnswers = answeredQuestions - correctAnswers;
+        int skippedQuestions = totalQuestions - answeredQuestions;
+
+        // процент правильных
+        double score = (totalQuestions > 0)
+                ? ((double) correctAnswers / totalQuestions) * 100
+                : 0;
+
+        boolean isPassed = score >= quizEntity.getPercentToPass();
+
+        attempt.setAnswers(userAnswers);
+        attempt.setCorrectAnswers(correctAnswers);
+        attempt.setWrongAnswers(wrongAnswers);
+        attempt.setSkippedQuestions(skippedQuestions);
+        attempt.setTotalQuestions(totalQuestions);
+        attempt.setScore((int) score); // если поле int, округляем
+        attempt.setPassed(isPassed);
+        attempt.setQuiz(quizEntity);
+
         return attemptRepository.save(attempt);
+    }
+
+    public List<Attempt> getQuizAttempts() {
+        User user = getCurrentUser();
+        return attemptRepository.findAllByUserId(user.getId());
     }
 }
