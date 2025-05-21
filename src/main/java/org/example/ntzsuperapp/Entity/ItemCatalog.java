@@ -29,4 +29,8 @@ public class ItemCatalog {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "owner")
+    private User catalogOwner;
 }

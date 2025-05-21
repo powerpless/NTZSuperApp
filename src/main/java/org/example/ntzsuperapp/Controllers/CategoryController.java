@@ -8,6 +8,8 @@ import org.example.ntzsuperapp.Entity.Category;
 import org.example.ntzsuperapp.Services.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +28,10 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories(){
         return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+    @GetMapping("/me")
+    public ResponseEntity<List<Category>> getAllCategoriesByCategoryOwner(){
+        return ResponseEntity.ok(categoryService.getAllCategoriesByCurrentUser());
     }
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody CategoryToUpdateDTO dto){

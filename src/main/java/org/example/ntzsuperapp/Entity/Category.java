@@ -20,5 +20,9 @@ public class Category {
 
     private String ruName;
     private String engName;
+
+    @ManyToOne
+    @JoinColumn(name = "owner")
+    private User categoryOwner;
 }
 

@@ -1,10 +1,14 @@
 package org.example.ntzsuperapp.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 // справочник конкретной вещи
@@ -18,7 +22,6 @@ public class DicItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String photoUrl;
     private boolean hasBeenDeleted;
 
     @ManyToOne
@@ -28,4 +31,13 @@ public class DicItem {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
+
+    @ManyToOne
+    @JoinColumn(name = "photo_id")
+    private FileDescriptor photo;
+
+    @OneToMany(mappedBy = "dicItem", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<ItemAttribute> attributes = new ArrayList<>();
+
 }

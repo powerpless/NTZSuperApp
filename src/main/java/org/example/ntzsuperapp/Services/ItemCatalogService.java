@@ -6,7 +6,11 @@ import org.example.ntzsuperapp.DTO.ItemCatalogToCreateDTO;
 import org.example.ntzsuperapp.DTO.ItemCatalogToUpdateDTO;
 import org.example.ntzsuperapp.Entity.Category;
 import org.example.ntzsuperapp.Entity.ItemCatalog;
+import org.example.ntzsuperapp.Entity.User;
 import org.example.ntzsuperapp.Repo.ItemCatalogRepo;
+import org.example.ntzsuperapp.Repo.UserRepo;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +20,18 @@ import java.util.List;
 public class ItemCatalogService {
     private final ItemCatalogRepo itemCatalogRepo;
     private final CategoryService categoryService;
+    private final UserRepo userRepo;
 
     public List<ItemCatalog> getAllCatalogs() {
         return itemCatalogRepo.findAll();
+    }
+
+    public List<ItemCatalog> getAllCatalogsByUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User owner = userRepo.findUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found" + username));
+        return itemCatalogRepo.findAllByCatalogOwner_id(owner.getId());
     }
 
     public ItemCatalog getById(Long id) {
@@ -26,7 +39,13 @@ public class ItemCatalogService {
                 .orElseThrow(() -> new RuntimeException("Catalog not found"));
     }
     public ItemCatalog createItemCatalog(ItemCatalogToCreateDTO dto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User owner = userRepo.findUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found" + username));
+
         Category category = categoryService.getCategoryById(dto.getCategoryId());
+
         ItemCatalog itemCatalog = new ItemCatalog();
         itemCatalog.setRuName(dto.getRuName());
         itemCatalog.setEngName(dto.getEngName());
@@ -34,6 +53,7 @@ public class ItemCatalogService {
         itemCatalog.setColor(dto.getColor());
         itemCatalog.setWeight(dto.getWeight());
         itemCatalog.setCategory(category);
+        itemCatalog.setCatalogOwner(owner);
         return itemCatalogRepo.save(itemCatalog);
     }
 

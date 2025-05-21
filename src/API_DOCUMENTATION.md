@@ -250,7 +250,7 @@ Base URL: /api/categories
 
     1.1. Создать категорию
         Метод: POST
-        URL: /api/categories
+        URL: /api/categories/me
         Тело запроса (JSON):
         {
         "ruName": "Электроника",
@@ -261,6 +261,10 @@ Base URL: /api/categories
     1.2. Получить все категории
         Метод: GET
         URL: /api/categories
+        Response: 200 OK
+    1.2.1 Получить все категории по владельцу
+        Метод: GET
+        URL: /api/categories/me
         Response: 200 OK
 
     1.3. Получить категорию по ID
@@ -348,6 +352,24 @@ Base URL: /api/item-catalogs
               { /* … другие записи … */ }
             ]
             
+        2.2.1 Получить все записи каталога по владельцу
+            Метод: GET          
+            URL: /api/item-catalogs/me           
+            Тело запроса: отсутствует           
+            Пример ответа (200 OK):        
+            [
+              {
+                "id": 12,
+                "ruName": "Ноутбук",
+                "engName": "Laptop",
+                "price": 1500.0,
+                "color": "Silver",
+                "weight": 2.5,
+                "category": { "id": 5, "ruName": "Электроника", "engName": "Electronics" }
+              },
+              { /* … другие записи … */ }
+            ]
+            
         2.3. Получить запись каталога по ID
             Метод: GET          
             URL: /api/item-catalogs/{id}            
@@ -408,20 +430,24 @@ Base URL: /api/dic-items
         3.1. Добавить предмет пользователю
             Метод: POST
            
-            URL: /api/dic-items/users/{userId}           
+            URL: /api/dic-items/me           
             Параметры URL:            
-            userId (Long) — ID пользователя-владельца           
+            me — owner (user)           
             Тело запроса (JSON):                  
             {
               "name": "MacBook Air",
-              "photoUrl": "https://example.com/photos/macbook.jpg",
-              "itemCatalogId": 12
-            }                        
+              "photoType": "image/jpeg",
+              "photoBytes": "BASE64_ENCODED_STRING",
+              "itemCatalogId": 12,
+              "attributes": [
+                { "key": "Процессор", "value": "M2" },
+                { "key": "Цвет", "value": "Серебристый" }
+              ]
+            }                  
             Пример ответа (201 Created):
             {
               "id": 33,
               "name": "MacBook Air",
-              "photoUrl": "https://example.com/photos/macbook.jpg",
               "hasBeenDeleted": false,
               "itemCatalog": {
                 "id": 12,
@@ -446,7 +472,6 @@ Base URL: /api/dic-items
             {
               "id": 33,
               "name": "MacBook Air",
-              "photoUrl": "https://example.com/photos/macbook.jpg",
               "hasBeenDeleted": false,
               "itemCatalog": { "id": 12, "ruName": "Ноутбук", "engName": "Laptop", … },
               "owner":       { "id": 7,  "username": "ivanov", … }
@@ -460,13 +485,11 @@ Base URL: /api/dic-items
             Тело запроса (JSON):
             {
               "name": "MacBook Air M2",
-              "photoUrl": "https://example.com/photos/macbook-m2.jpg"
             }             
             Пример ответа (200 OK):
             {
               "id": 33,
               "name": "MacBook Air M2",
-              "photoUrl": "https://example.com/photos/macbook-m2.jpg",
               /* … остальная структура как выше … */
             }
             Ошибки:            

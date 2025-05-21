@@ -9,4 +9,5 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepo extends JpaRepository<Category, Long> {
+    List<Category> findAllCategoriesByCategoryOwnerId(Long categoryOwnerId);
 }
