@@ -72,19 +72,18 @@ public class UserController {
         return ResponseEntity.ok("Nickname was updated");
     }
 
-    @PostMapping("/me/avatar/upload")
-    public ResponseEntity<?> uploadAvatar(@RequestBody FileDTO file, Authentication authentication) {
-        String username = authentication.getName();
-
-        if (!file.getType().startsWith("image/")) {
-            return ResponseEntity.badRequest().body("Можно загружать только изображения.");
-        }
-
+    @PostMapping("/avatar")
+    public ResponseEntity<FileDescriptor> uploadUserAvatar(
+            @RequestBody FileDTO fileDTO,
+            Authentication authentication) {
         try {
-            FileDescriptor saved = userService.saveAvatarForUser(username, file);
-            return ResponseEntity.ok("Аватар успешно загружен. ID файла: " + saved.getId());
+            String username = authentication.getName();
+            FileDescriptor savedAvatar = userService.saveAvatarForUser(username, fileDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedAvatar);
         } catch (IOException e) {
-            return ResponseEntity.status(500).body("Ошибка при сохранении файла: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
