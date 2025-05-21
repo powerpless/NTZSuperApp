@@ -140,4 +140,12 @@ public class DicItemService {
         return dicItemRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
     }
+    public List<DicItem> getMyItems() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User owner = userRepo.findUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+
+        return dicItemRepo.findAllByOwnerAndHasBeenDeletedFalse(owner);
+    }
 }

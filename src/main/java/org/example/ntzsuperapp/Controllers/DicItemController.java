@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/dic-items")
 @RequiredArgsConstructor
@@ -36,5 +38,9 @@ public class DicItemController {
     @PutMapping("/{id}")
     public ResponseEntity<DicItem> updateDicIteam(@PathVariable Long id, @RequestBody ItemToUpdateDTO dto){
         return ResponseEntity.ok(dicItemService.updateItem(id, dto));
+    }
+    @GetMapping("/me")
+    public ResponseEntity<List<DicItem>> getMyDicItems() {
+        return ResponseEntity.ok(dicItemService.getMyItems());
     }
 }
