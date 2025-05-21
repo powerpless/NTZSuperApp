@@ -1,10 +1,10 @@
 package org.example.ntzsuperapp.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 
 // категория
@@ -23,6 +23,7 @@ public class Category {
 
     @ManyToOne
     @JoinColumn(name = "owner")
+    @JsonIgnore
     private User categoryOwner;
 }
 
