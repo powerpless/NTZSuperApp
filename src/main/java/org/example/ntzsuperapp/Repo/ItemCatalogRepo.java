@@ -12,4 +12,7 @@ public interface ItemCatalogRepo extends JpaRepository<ItemCatalog, Long> {
     List<ItemCatalog> findItemCatalogsByCategoryId(Long categoryId);
 
     List<ItemCatalog> findAllByCatalogOwner_id(Long id);
+
+    List<ItemCatalog> findAllByCategoryId(Long categoryId);
+
 }
