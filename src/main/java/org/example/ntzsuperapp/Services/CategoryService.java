@@ -24,12 +24,14 @@ public class CategoryService {
     private final ItemCatalogRepo itemCatalogRepo;
 
     public Category createCategory(CategoryToCreateDTO dto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User owner = userRepo.findUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found" + username));
+
         Category category = new Category();
         category.setRuName(dto.getRuName());
         category.setEngName(dto.getEngName());
-
-        User owner = userRepo.findById(dto.getUserId()).orElseThrow(() -> new RuntimeException("User not found" + dto.getUserId()));
-
         category.setCategoryOwner(owner);
         return categoryRepo.save(category);
     }

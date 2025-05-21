@@ -10,5 +10,4 @@ public class ItemCatalogToCreateDTO {
     private String color;
     private Double weight;
     private Long categoryId;
-    private Long userId;
 }

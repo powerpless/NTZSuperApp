@@ -7,5 +7,4 @@ import lombok.Data;
 public class CategoryToCreateDTO {
     private String ruName;
     private String engName;
-    private Long userId;
 }

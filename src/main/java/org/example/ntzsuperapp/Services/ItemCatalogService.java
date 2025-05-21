@@ -29,7 +29,8 @@ public class ItemCatalogService {
     public List<ItemCatalog> getAllCatalogsByUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User owner = userRepo.findUserByUsername(username).orElseThrow(() -> new RuntimeException("User not found" + username));
+        User owner = userRepo.findUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found" + username));
         return itemCatalogRepo.findAllByCatalogOwner_id(owner.getId());
     }
 
@@ -38,8 +39,10 @@ public class ItemCatalogService {
                 .orElseThrow(() -> new RuntimeException("Catalog not found"));
     }
     public ItemCatalog createItemCatalog(ItemCatalogToCreateDTO dto){
-        User owner = userRepo.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User owner = userRepo.findUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found" + username));
 
         Category category = categoryService.getCategoryById(dto.getCategoryId());
 
