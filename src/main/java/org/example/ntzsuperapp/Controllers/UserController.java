@@ -36,12 +36,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/me/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id){
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
 
-    @GetMapping("/jwt/me")
+
+    @GetMapping("/me")
     public ResponseEntity<User> getCurrentUserByJwt(Authentication authentication){
         String username = authentication.getName();
 
@@ -55,10 +52,10 @@ public class UserController {
     }
 
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> changePersonalData(@PathVariable Long id, @RequestBody UsernameUpdateDTO request) {
-        User user = userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    @PutMapping("/update")
+    public ResponseEntity<String> changePersonalData(Authentication authentication, @RequestBody UsernameUpdateDTO request) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
 
         if (user.getPerson() == null) {
             throw new RuntimeException("User does not have a linked person");

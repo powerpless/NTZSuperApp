@@ -6,6 +6,7 @@ import org.example.ntzsuperapp.DTO.CategoryToCreateDTO;
 import org.example.ntzsuperapp.DTO.CategoryToUpdateDTO;
 import org.example.ntzsuperapp.Entity.Category;
 import org.example.ntzsuperapp.Services.CategoryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +19,11 @@ public class CategoryController {
     private final CategoryService categoryService;
     @PostMapping
     public ResponseEntity<Category> createCategory(@RequestBody CategoryToCreateDTO dto){
-        return ResponseEntity.ok(categoryService.createCategory(dto));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(categoryService.createCategory(dto));
     }
-    @GetMapping("/all-categories")
+    @GetMapping
     public ResponseEntity<List<Category>> getAllCategories(){
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
@@ -31,5 +34,10 @@ public class CategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategory(@PathVariable Long id){
         return ResponseEntity.ok(categoryService.getCategoryById(id));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id){
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
     }
 }
