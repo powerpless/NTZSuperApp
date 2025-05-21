@@ -16,6 +16,15 @@ public class JwtCore {
     @Value("3600000")
     private int lifeTime;
 
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public String generateToken(Authentication authentication){
         UserDetailsImp userDetails = (UserDetailsImp) authentication.getPrincipal();
         return Jwts.builder()

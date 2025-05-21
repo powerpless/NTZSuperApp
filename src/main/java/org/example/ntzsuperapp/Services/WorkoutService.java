@@ -16,11 +16,21 @@ public class WorkoutService {
     @Autowired
     private UserRepo userRepository;
 
-    public Workout addWorkout(Workout workout, Long userId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+    public Workout addWorkout(Workout workout, String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("User not found: " + username);
+        }
         workout.setUser(user);
         return workoutRepository.save(workout);
+    }
+
+    public List<Workout> getAllWorkoutsByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("User not found: " + username);
+        }
+        return workoutRepository.findAllByUser(user);
     }
 
     public List<Workout> getWorkoutsByUser(Long id){
@@ -52,8 +62,13 @@ public class WorkoutService {
         workoutRepository.delete(workout);
     }
 
-    public String getProgress(Long userId, String exercise) {
-        List<Workout> workouts = workoutRepository.findByUserIdAndExerciseOrderByDateAsc(userId, exercise);
+    public String getProgress(String username, String exercise) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("Пользователь не найден: " + username);
+        }
+
+        List<Workout> workouts = workoutRepository.findByUserIdAndExerciseOrderByDateAsc(user.getId(), exercise);
 
         if (workouts.size() < 2) {
             return "Недостаточно данных для анализа прогресса";
@@ -80,4 +95,5 @@ public class WorkoutService {
                 first.getSets(), last.getSets(), setsPercent
         );
     }
+
 }

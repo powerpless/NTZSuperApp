@@ -21,6 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class SecurityController {
@@ -97,6 +99,17 @@ public class SecurityController {
                     .body(new Login(false, null, 0, null, "Invalid username or password"));
         }
 
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<Map<String, Boolean>> validateToken(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            boolean isValid = jwtCore.validateToken(token);
+            return ResponseEntity.ok(Map.of("valid", isValid));
+        } catch (Exception e) {
+            return ResponseEntity.ok(Map.of("valid", false));
+        }
     }
 
     @Autowired
