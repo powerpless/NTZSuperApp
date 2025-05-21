@@ -1,13 +1,17 @@
 package org.example.ntzsuperapp.Controllers;
 
 import org.example.ntzsuperapp.DTO.AvatarUploadResponse;
+import org.example.ntzsuperapp.DTO.FileDTO;
 import org.example.ntzsuperapp.DTO.UsernameUpdateDTO;
+import org.example.ntzsuperapp.Entity.FileDescriptor;
 import org.example.ntzsuperapp.Entity.User;
 import org.example.ntzsuperapp.Repo.PersonRepo;
 import org.example.ntzsuperapp.Repo.UserRepo;
 import org.example.ntzsuperapp.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -67,35 +72,36 @@ public class UserController {
         return ResponseEntity.ok("Nickname was updated");
     }
 
-    @PutMapping("/users/avatar")
-    public ResponseEntity<AvatarUploadResponse> updateAvatar(@RequestParam("avatar")MultipartFile avatarFile, Authentication authentication){
+    @PostMapping("/me/avatar/upload")
+    public ResponseEntity<?> uploadAvatar(@RequestBody FileDTO file, Authentication authentication) {
         String username = authentication.getName();
-        User user = userService.findByUsername(username);
 
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new AvatarUploadResponse("User not found", null));
+        if (!file.getType().startsWith("image/")) {
+            return ResponseEntity.badRequest().body("Можно загружать только изображения.");
         }
-
-        if (!avatarFile.getContentType().startsWith("image/")) {
-            throw new IllegalArgumentException("Only image files are allowed");
-        }
-
-        String filename = UUID.randomUUID() + "_" + avatarFile.getOriginalFilename();
-        Path uploadPath = Paths.get("uploads").resolve(filename);
 
         try {
-            Files.createDirectories(uploadPath.getParent());
-            avatarFile.transferTo(uploadPath);
+            FileDescriptor saved = userService.saveAvatarForUser(username, file);
+            return ResponseEntity.ok("Аватар успешно загружен. ID файла: " + saved.getId());
         } catch (IOException e) {
-            throw new RuntimeException("Failed to save avatar", e);
+            return ResponseEntity.status(500).body("Ошибка при сохранении файла: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/me/avatar")
+    public ResponseEntity<byte[]> downloadAvatar(Authentication authentication) {
+        String username = authentication.getName();
+
+        Optional<FileDescriptor> avatarOpt = userService.getAvatarForUser(username);
+        if (avatarOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
 
-        user.getPerson().setAvatarUrl("/uploads/" + filename);
-        userRepo.save(user);
-
-        return ResponseEntity.ok(new AvatarUploadResponse(
-                "Avatar updated successfully", "/uploads/" + filename
-        ));
+        FileDescriptor avatar = avatarOpt.get();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + avatar.getName() + "\"")
+                .contentType(MediaType.parseMediaType(avatar.getType()))
+                .body(avatar.getBytes());
     }
+
 }

@@ -20,4 +20,7 @@ public class Person {
     @OneToOne(mappedBy = "person")
     @JsonIgnore
     private User user;
+    @OneToOne
+    @JoinColumn(name = "avatar_id")
+    private FileDescriptor avatar;
 }
