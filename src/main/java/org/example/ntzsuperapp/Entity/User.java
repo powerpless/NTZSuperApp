@@ -28,12 +28,6 @@ public class User {
     private Person person;
     private boolean hasBeenDeleted;
 
-    //workout
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Workout> workouts;
-    //workout
-
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_roles",

@@ -23,6 +23,4 @@ public class Role {
         this.name = name;
     }
 
-    @ManyToMany
-    private Set<User> users;
 }

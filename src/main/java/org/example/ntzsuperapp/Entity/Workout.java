@@ -18,7 +18,7 @@ public class Workout {
     private int reps;
     private int weight;
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     private LocalDate date;
