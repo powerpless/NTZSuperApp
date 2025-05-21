@@ -1,10 +1,15 @@
 package org.example.ntzsuperapp.Controllers;
 
+import org.example.ntzsuperapp.Entity.User;
 import org.example.ntzsuperapp.Entity.Workout;
+import org.example.ntzsuperapp.Services.UserService;
 import org.example.ntzsuperapp.Services.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/workout")
@@ -12,9 +17,11 @@ public class WorkoutController {
     @Autowired
     private WorkoutService workoutService;
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<Workout> addWorkout(@PathVariable Long userId, @RequestBody Workout workout){
-        return ResponseEntity.ok(workoutService.addWorkout(workout, userId));
+
+    @PostMapping
+    public ResponseEntity<Workout> addWorkout(@RequestBody Workout workout, Authentication authentication) {
+        String username = authentication.getName();
+        return ResponseEntity.ok(workoutService.addWorkout(workout, username));
     }
 
     @GetMapping("/{id}")
@@ -22,9 +29,17 @@ public class WorkoutController {
         return ResponseEntity.ok(workoutService.getWorkoutById(id));
     }
 
-    @GetMapping("/progress/{userId}/{exercise}")
-    public ResponseEntity<String> getProgress(@PathVariable Long userId, @PathVariable String exercise) {
-        return ResponseEntity.ok(workoutService.getProgress(userId, exercise));
+    @GetMapping
+    public ResponseEntity<List<Workout>> getAllWorkoutsByUser(Authentication authentication) {
+        String username = authentication.getName();
+        return ResponseEntity.ok(workoutService.getAllWorkoutsByUsername(username));
+    }
+
+
+    @GetMapping("/progress/{exercise}")
+    public ResponseEntity<String> getProgress(@PathVariable String exercise, Authentication authentication) {
+        String username = authentication.getName();
+        return ResponseEntity.ok(workoutService.getProgress(username, exercise));
     }
 
     @PutMapping("/{id}")
